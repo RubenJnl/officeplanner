@@ -1,0 +1,12 @@
+{
+    "savedDates" : [
+        {
+            "date" : "2020-06-05",
+            "employee" : "Ruben" 
+        },
+        {
+            "date" : "2020-06-02",
+            "employee" : "Ruben" 
+        }
+    ]
+}
