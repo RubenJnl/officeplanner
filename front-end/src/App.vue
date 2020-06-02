@@ -2,9 +2,9 @@
   <div id="app">
     <Header />
 
-    <Calendar :registered="registered" :showAdd="showAdd" />
+    <Calendar :registered="registered" :showAdd="showAdd" :addDate="new Date()" />
     
-    <Add v-if="showAdd" :date="addDate" />
+    <Add v-if="showAdd" :addDate="new Date()" :employeeName="employeeName" />
     
   </div>
 </template>
@@ -26,7 +26,11 @@ export default {
   props: {
     registered: Object,
     showAdd : Boolean,
-    addDate: Object
+    employeeName: String,
+    addDate: Date
+  },
+  data : {
+    // employeeName: '',
   },
   computed: {
 
@@ -43,6 +47,7 @@ export default {
   },
   mounted() {
     this.$emit("showAdd", true) ;
+    // this.$set(this._props, 'addDate', new Date())
     this.getRegistered();
   },
 }

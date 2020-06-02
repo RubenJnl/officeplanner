@@ -1,9 +1,9 @@
 <template>
   <div class="modal">
     <div class="modalview">
-        <h2>Toevoegen aan {{date}} {{readableDate}}</h2>
+        <h2>Toevoegen aan {{addDate}} {{readableDate}}</h2>
         <label for="nameInput">Naam</label>
-        <input id="nameInput" type="text" />
+        <input id="nameInput" v-model="employeeName" type="text" />
 
         <div class="button-row">
             <button class="add-to" @click="addTo" >Toevoegen</button>
@@ -15,20 +15,25 @@
 
 <script>
 
+import * as moment from 'moment';
 
 export default {
   name: 'Add',
   props: {
-      date: Object
+      addDate: Date,
+      readableDate : Object,
+      employeeName : String
   },
   data() {
       return {
-          readableDate : 'geen'
+        // readableDate : 'geen',
+        // employeeName : ''
       }
   },
   methods: {
       addTo: function(){
-          console.log('add')
+          console.log('add', this.employeeName, this._props)
+          
       },
       cancelAdd: function() {
         //   console.log('click cancel')
@@ -37,7 +42,7 @@ export default {
   },
   beforeUpdate: function() {
   console.log('change before update!')
-        readableDate = moment(date).format('ll');
+        readableDate = moment(addDate).format('ll');
   },
   updated: function () {
       console.log('change!')
@@ -45,12 +50,12 @@ export default {
         // Code that will run only after the
         // entire view has been re-rendered
         console.log('change!')
-        readableDate = moment(date).format('ll');
+        readableDate = moment(this._props.addDate).format('ll');
     })
   },
   watch : {
-      date: function (date) { //date, olddate
-      console.log('newdate', date)
+      addDate: function (addDate) { //date, olddate
+        console.log('newdate', this._props.addDate)
     }
   }
   

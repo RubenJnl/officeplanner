@@ -23,7 +23,7 @@
         </div> -->
         <div v-for="(currday) in Number(daysInMonth)" :key="currday">
             <div class="day" v-if="new Date(year, month, currday).getDay() !== 0 && new Date(year, month, currday).getDay() !== 6">
-                <button class="add" @click="add(this, new Date(year, month, currday))">+</button>
+                <button class="add" @click="add(new Date(year, month, currday))">+</button>
                 <div class="day__header">
                     {{days[new Date(year, month, currday).getDay()]}} {{currday}}
                 </div>
@@ -91,6 +91,8 @@ export default {
         // this.$emit("showAdd", true);
         console.log(this.$root.$children[0])
         this.$set(this.$root.$children[0]._props, 'showAdd', true);
+        this.$set(this.$root.$children[0]._props, 'addDate', date);
+        // this.$emit("addDate", date);
     }
 //     getDaysInMonth: function (month, year) {
 //         this.$set(this._props, 'daysInMonth', new Date(year, month, 0).getDate())
