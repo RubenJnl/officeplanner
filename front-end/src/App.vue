@@ -2,9 +2,9 @@
   <div id="app">
     <Header />
 
-    <Calendar :registered="registered" :showAdd="showAdd" :addDate="new Date()" />
+    <Calendar :registered="registered" :showAdd="showAdd" :addDate="new Date()" :months="months" :days="days" />
     
-    <Add v-if="showAdd" :addDate="new Date()" :employeeName="employeeName" />
+    <Add v-if="showAdd" :addDate="addDate" :employeeName="employeeName" :months="months" :days="days" />
     
   </div>
 </template>
@@ -29,8 +29,32 @@ export default {
     employeeName: String,
     addDate: Date
   },
-  data : {
-    // employeeName: '',
+  data() {
+      return {
+        months : [
+            "januari",
+            "februari",
+            "maart",
+            "april",
+            "mei",
+            "juni",
+            "juli",
+            "augustus",
+            "semptember",
+            "oktober",
+            "november",
+            "december"
+        ],
+        days : [
+            "zondag",
+            "maandag",
+            "dinsdag",
+            "woensdag",
+            "donderdag",
+            "vrijdag",
+            "zaterdag"
+        ]
+    }
   },
   computed: {
 
@@ -71,10 +95,11 @@ export default {
 </script>
 
 <style>
-#app {
+* {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #401465;
+   color: #401465;
 }
+
 </style>

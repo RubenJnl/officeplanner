@@ -1,7 +1,7 @@
 <template>
 <div>
-   <label for="monthSelect"> Maand </label>
-    <!--<select id="monthSelect">
+    <!--<label for="monthSelect"> Maand </label>
+    <select id="monthSelect">
         <option v-for="m in months" :key="m"  :selected="months[month] == m ? true : false">
             {{m}}
         </option>
@@ -13,27 +13,27 @@
             {{y}}
         </option>
     </select>-->
-    {{months[month - 1]}} {{year}}
+    <h3>{{months[month]}} {{year}}</h3>
     <div class="month">
-        <!-- <div  v-for="(day) in Number(weekDayOfMonth)" :key="'empty' + day">
-            <div >
-            x;{{weekDayOfMonth}} {{days[weekDayOfMonth]}} {{x(day)}}
-            
+        <div  v-for="(day) in Number(weekDayOfMonth)" :key="'empty' + day">
+            <div class="day">
             </div>
-        </div> -->
+        </div> 
         <div v-for="(currday) in Number(daysInMonth)" :key="currday">
             <div class="day" v-if="new Date(year, month, currday).getDay() !== 0 && new Date(year, month, currday).getDay() !== 6">
-                <button class="add" @click="add(new Date(year, month, currday))">+</button>
+                <button class="add" @click="add(new Date(year, month, currday))" title="add">+</button>
                 <div class="day__header">
+                <!--{{year}}-{{month}}-{{currday}}
+                utc:{{new Date(year, month, currday).getUTCDay()}}-->
                     {{days[new Date(year, month, currday).getDay()]}} {{currday}}
                 </div>
                 <ul class="list" v-if='typeof registered != "undefined"'>
                     <li 
-                        v-for="register in registered.savedDates" :key="register.name + register.date"
+                        v-for="register in registered.savedDates" :key="register.employee + register.date"
                         v-if="register.date && 
                             new Date(register.date).getDate() == new Date(year, month, currday).getDate() && 
-                            new Date(register.date).getMonth() == new Date(year, month, currday).getMonth() - 1">
-                        {{register.employee}}
+                            new Date(register.date).getMonth() == new Date(year, month, currday).getMonth()">
+                        <button class="text" @click="remove(register.employee, register.date)" :title="'Verwijder ' + register.employee">{{register.employee}} <span> - </span></button>
                     </li>
                 </ul>
             </div>
@@ -50,79 +50,53 @@
 <script>
 import * as moment from 'moment';
 import 'moment/locale/nl';
-// console.log(moment(), moment(weekday))
+import axios from 'axios';
 
 export default {
   name: 'Calendar',
   props: {
       registered: Object,
-      showAdd: Boolean
-  },
-  data() {
-      return {
-        months : [
-            "januari",
-            "februari",
-            "maart",
-            "april",
-            "mei",
-            "juni",
-            "juli",
-            "augustus",
-            "semptember",
-            "oktober",
-            "november",
-            "december"
-        ],
-        days : [
-            "zondag",
-            "maandag",
-            "dinsdag",
-            "woensdag",
-            "donderdag",
-            "vrijdag",
-            "zaterdag"
-        ]
-    }
+      showAdd: Boolean,
+      months: Array,
+      days: Array
   },
   methods : {
     add: function(date) {
-        console.log('add to', date, this);
+        console.log('add to', date);
         // this.$emit("showAdd", true);
-        console.log(this.$root.$children[0])
+        // console.log(this.$root.$children[0])
         this.$set(this.$root.$children[0]._props, 'showAdd', true);
         this.$set(this.$root.$children[0]._props, 'addDate', date);
         // this.$emit("addDate", date);
+    },
+    remove: function(employee, date) {
+        if (confirm(`Wil je ${employee} echt verwijderen van ${this._props.days[new Date(date).getUTCDay()]} ${new Date(date).getDate()} ${this._props.months[new Date(date).getUTCMonth()]}?`)){
+            axios.post('http://'+window.location.hostname +':9000/removeEmployee', {
+                "employee": employee,
+                "date" : date
+            }) .then(res => {
+                // alert('success!')
+                this.$root.$children[0].getRegistered()
+            })
+        }
     }
-//     getDaysInMonth: function (month, year) {
-//         this.$set(this._props, 'daysInMonth', new Date(year, month, 0).getDate())
-//     }
   },
   computed: {
     dateTime() {
         return new Date();
     },
     year() {
-        // console.log(this.dateTime)
-        
-        return this.dateTime.getYear()
+        return this.dateTime.getFullYear()
     },
-    years() {
-        return [2020, 2021, 2022]
-    },
+    // years() {
+    //     return [2020, 2021, 2022]
+    // },
     month() {
-        // console.log(this.dateTime, this.dateTime.getMonth())
-        
-        return this.dateTime.getMonth() + 1;
+        return this.dateTime.getUTCMonth();
     },
     weekDayOfMonth() {
-        console.log('dag', this.days[new Date(this.year, this.month, 0).getDay()]);
-        return new Date(this.year, this.month, 0).getDay()
+        return new Date(this.year, this.month, 1).getDay()
     },
-    // x(y) {
-    //     console.log(moment)
-    //     return moment.prototype.date(y)
-    // },
     daysInMonth() {
         return new Date(this.year, this.month, 0).getDate()
     },
@@ -141,6 +115,7 @@ export default {
         gap: 6px;
     }
     .day {
+        height: 100%;
         min-height: 100px;
         border: 1px solid #401465;
         border-radius: 5px 5px 0 0;
@@ -170,11 +145,12 @@ export default {
     .add {
         // background: rgba(#401465, .2);
         background: lighten(#401465, 70%);
-        font-size: 150%;
+        font-size: 120%;
         position: absolute;
         top: 1px;
         right: 1px;
-        padding: 0 10px 3px;
+        padding: 0 5px 3px;
+        line-height: .9em;
         border: 1px solid #401465;
         opacity: 0;
         pointer-events: none;
@@ -185,6 +161,35 @@ export default {
         &:hover {
             cursor: pointer;
         }
+    }
+
+    .text {
+        background: none;
+        border: none;
+        padding: 0;
+        color: #401465;
+        display: block;
+        width: 100%;
+        text-align: left;
+
+        span {
+            float: right;
+            border: 1px solid #401465;
+            border-radius: 5px;
+            padding: 0 5px 3px;
+            line-height: 1em;
+            opacity: 0;
+        }
+
+        &:hover {
+            cursor: pointer;
+            text-decoration: underline;
+
+            span {
+                opacity: 1;
+            }
+        }
+        
     }
 
     .day:hover .add,

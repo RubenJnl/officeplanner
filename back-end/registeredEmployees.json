@@ -1,12 +1,1 @@
-{
-    "savedDates" : [
-        {
-            "date" : "2020-06-05",
-            "employee" : "Ruben" 
-        },
-        {
-            "date" : "2020-06-02",
-            "employee" : "Ruben" 
-        }
-    ]
-}
+{"savedDates":[{"date":"2020-06-04T22:00:00.000Z","employee":"Ruben"},{"date":"2020-06-01T22:00:00.000Z","employee":"Ruben"},{"date":"2020-06-08T22:00:00.000Z","employee":"Patrik"},{"date":"2020-06-08T22:00:00.000Z","employee":"Ruben"}]}

@@ -1,13 +1,14 @@
 <template>
   <div class="modal">
     <div class="modalview">
-        <h2>Toevoegen aan {{addDate}} {{readableDate}}</h2>
+        <h2>Toevoegen aan {{readableDate}}</h2>
         <label for="nameInput">Naam</label>
-        <input id="nameInput" v-model="employeeName" type="text" />
+        <input ref="name" id="nameInput" @keydown="changeInput" v-model="employeeName" type="text" />
 
         <div class="button-row">
-            <button class="add-to" @click="addTo" >Toevoegen</button>
             <button class="" @click="cancelAdd">Annuleren</button>
+            
+            <button class="add-to" @click="addTo" submit>Toevoegen</button>
         </div>
     </div>
   </div>
@@ -16,49 +17,53 @@
 <script>
 
 import * as moment from 'moment';
+import axios from 'axios';
 
 export default {
   name: 'Add',
   props: {
       addDate: Date,
-      readableDate : Object,
-      employeeName : String
+      employeeName : String,
+      months: Array,
+      days: Array
   },
   data() {
       return {
-        // readableDate : 'geen',
-        // employeeName : ''
+        readableDate : 'geen'
       }
   },
   methods: {
+      changeInput: function(e){
+          if (e.keyCode == 13 || e.key == 'Enter'){
+              this.addTo()
+          }
+      },
       addTo: function(){
-          console.log('add', this.employeeName, this._props)
+        let employee = this.employeeName;
+
+        axios.post('http://'+window.location.hostname +':9000/addEmployee', {
+            "employee": employee,
+            "date" : this._props.addDate
+        }) .then(res => {
+            this.$set(this.$root.$children[0]._props, 'showAdd', false);
+            this.$root.$children[0].getRegistered()
+        })
           
       },
       cancelAdd: function() {
-        //   console.log('click cancel')
         this.$set(this.$root.$children[0]._props, 'showAdd', false);
       }
   },
-  beforeUpdate: function() {
-  console.log('change before update!')
-        readableDate = moment(addDate).format('ll');
-  },
-  updated: function () {
-      console.log('change!')
-    this.$nextTick(function () {
-        // Code that will run only after the
-        // entire view has been re-rendered
-        console.log('change!')
-        readableDate = moment(this._props.addDate).format('ll');
-    })
-  },
-  watch : {
-      addDate: function (addDate) { //date, olddate
-        console.log('newdate', this._props.addDate)
-    }
+  mounted: function() {
+    // console.log('change mounted!', this._props.addDate)
+    let d = this._props.addDate,
+        days = this._props.days,
+        months = this._props.months;
+    this.readableDate = `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+    console.log(this.$refs.name.focus())
+    this.$refs.name.$el.focus();
+
   }
-  
 }
 </script>
 
@@ -82,6 +87,8 @@ export default {
     border: 1px solid #401465;
     border-radius: 5px;
     background: white;
+    top: 50%;
+    transform: translateY(50%);
 
     label {
         margin-right: 16px;
@@ -101,5 +108,15 @@ button {
     border-radius: 5px;
     cursor: pointer;
     pointer-events: initial;
+    padding: 3px 8px;
+
+    &[submit] {
+        background: lighten(#401465, 10%);
+        color: white;
+    }
+
+    + button {
+        margin-left: 16px;
+    }
 }
 </style>
