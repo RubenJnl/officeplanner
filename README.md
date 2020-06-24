@@ -2,22 +2,27 @@
 
 ## Project setup
 ```
-npm install
+cd back-end && npm install && cd ../front-end npm install
+```
+
+## Run back-end
+```
+cd back-end && npm start
 ```
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
+cd front-end npm start
+```
+
+### Compiles and hot-reloads for development in production mode (minified)
+```
+cd front-end npm run serve
 ```
 
 ### Compiles and minifies for production
 ```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+cd front-end npm run build
 ```
 
 ### Customize configuration
